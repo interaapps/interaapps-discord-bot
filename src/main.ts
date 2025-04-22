@@ -10,6 +10,8 @@ import {
 } from 'discord.js';
 import pastefyCommand from "./commands/pastefy-command";
 import shortenCommand from "./commands/shorten-command";
+import express from 'express';
+
 require('dotenv').config()
 
 const client = new Client({
@@ -70,4 +72,12 @@ const rest = new REST({ version: '10' }).setToken(process.env.DISCORD_API_TOKEN!
 })();
 
 client.login(process.env.DISCORD_API_TOKEN);
+
+const webServer = express();
+webServer.get('/', (req, res) => {
+    res.send('Discord Bot!')
+})
+webServer.listen(process.env.SERVER_PORT || 3000, () => {
+    console.log(`Web server is running on port ${process.env.SERVER_PORT || 3000}`);
+})
 
