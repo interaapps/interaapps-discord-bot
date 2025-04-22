@@ -22,8 +22,31 @@ const client = new Client({
     ],
 });
 
+const activities = [
+    {
+        name: 'pastefy',
+        url: 'https://pastefy.app'
+    },
+    {
+        name: 'pastefy codebox',
+        url: 'https://box.pastefy.app'
+    },
+    {
+        name: 'punyshort',
+        url: 'https://puny.be'
+    },
+    {
+        name: 'quotysco',
+        url: 'https://quotysco.eu'
+    }
+]
+
 client.on(Events.ClientReady, readyClient => {
-    console.log(`Logged in as ${readyClient.user.tag}!`);
+    client.user?.setActivity(activities[0]);
+    setInterval(() => {
+        const activity = activities[Math.floor(Math.random() * activities.length)];
+        client.user?.setActivity(activity);
+    }, 10000)
 });
 
 const commands = [
