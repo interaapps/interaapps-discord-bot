@@ -67,6 +67,32 @@ client.on(Events.InteractionCreate, async interaction => {
     command.execute(interaction)
 });
 
+const HONEY_POT_CHANNEL_ID = '1376199931110625404'
+const BOT_INFO_CHANNEL_ID = '1376201783969448019'
+const UNSOFT_BAN_CHANNEL_ID = '1376204201759211530'
+const SOFT_BAN_ROLE_ID = '1376203304677146688'
+
+client.on(Events.MessageCreate, async message => {
+    if (message.channelId === HONEY_POT_CHANNEL_ID) {
+        await message.author.send("This Discord server is not about any roblox scripts or games. You have been soft-banned for posting them.");
+        await message.delete()
+        await message.member?.roles.add(SOFT_BAN_ROLE_ID)
+
+        const infoChannel = await client.channels.fetch(BOT_INFO_CHANNEL_ID)
+        if (infoChannel?.isSendable()) {
+            infoChannel.send(`User ${message.author.toString()} has been soft-banned for posting in the roblox honeypot channel. Message: ${message.content}`);
+        }
+        return;
+    }
+
+    if (message.member?.roles.cache.find(r => r.id === SOFT_BAN_ROLE_ID)) {
+        if (message.channelId === UNSOFT_BAN_CHANNEL_ID) {
+            return;
+        }
+        await message.delete()
+    }
+})
+
 const rest = new REST({ version: '10' }).setToken(process.env.DISCORD_API_TOKEN!);
 
 (async () => {
@@ -100,6 +126,7 @@ const webServer = express();
 webServer.get('/', (req, res) => {
     res.send('Discord Bot!')
 })
+
 webServer.listen(process.env.SERVER_PORT || 3000, () => {
     console.log(`Web server is running on port ${process.env.SERVER_PORT || 3000}`);
 })
